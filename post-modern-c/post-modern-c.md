@@ -352,3 +352,49 @@ int main(){
     return 0;
 }
 ~~~
+
+## Modules 
+
+Modules must always contain a .c file for function definition and a .h for declaration, all imports must be done by the father package that  imports it 
+
+
+main.c/<br>
+package/<br>
+package/declaration.h<br>
+package/definition.h<br>
+package/car/<br>
+package/car/car.c<br>
+package/car/car.h<br>
+package/string_array/<br>
+package/string_array/string_array.c<br>
+package/string_array/string_array.h<br>
+
+#### main.c
+~~~c
+#include "package/declaration.h"
+#include "package/definition.h"
+~~~
+
+#### package/declaration.h
+~~~c
+#include "string_array/string_array.h"
+#include "car/car.h"
+~~~
+
+#### package/definition.h
+~~~c
+#include "string_array/string_array.c"
+#include "car/car.c"
+
+~~~
+
+
+## References:
+The entire OUI Code base follows this standard
+You can check it out for inspiration:
+Our Web Framework
+https://github.com/OUIsolutions/CWebStudio
+Our IO Handling Lib
+https://github.com/OUIsolutions/DoTheWorld
+Our HashTable Lib
+https://github.com/OUIsolutions/CHashManipulator
