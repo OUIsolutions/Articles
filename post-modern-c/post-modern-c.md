@@ -15,6 +15,8 @@ Following a pattern of all functions having their name, followed by their functi
 And always add the structure name as self (similar to python)
 
 ~~~c
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -26,16 +28,16 @@ typedef struct {
 }Car;
 Car * Car_constructor(const char *name, const char *color, int speed);
 
-void Car_setName(Car *car, const char *name);
-void Car_setColor(Car *car, const char *color);
-void Car_setSpeed(Car *car, int speed);
+void Car_setName(Car *self, const char *name);
+void Car_setColor(Car *self, const char *color);
+void Car_setSpeed(Car *self, int speed);
 
-char * Car_getName(Car *car);
-char * Car_getColor(Car *car);
-int Car_getSpeed(Car *car);
+char * Car_getName(Car *self);
+char * Car_getColor(Car *self);
+int Car_getSpeed(Car *self);
 
-void Car_print(Car *car);
-void Car_free(Car *car);
+void Car_print(Car *self);
+void Car_free(Car *self);
 
 
 //=======================Definition==============================================

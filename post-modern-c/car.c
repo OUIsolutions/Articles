@@ -19,8 +19,8 @@ char * Car_getName(Car *self);
 char * Car_getColor(Car *self);
 int Car_getSpeed(Car *self);
 
-void Car_print(Car *car);
-void Car_free(Car *car);
+void Car_print(Car *self);
+void Car_free(Car *self);
 
 
 //=======================Definition==============================================
