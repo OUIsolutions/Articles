@@ -100,3 +100,6 @@ int main(){
 ~~~
 
 ## Arrays
+Arrays must follow the standard of having the name of the corresponding structure, followed by the sulfix: Array
+and implement the append, pop methods
+as well as you can also implement the foreach, filter, etc. methods if necessary
