@@ -28,6 +28,8 @@ StringArray * StringArray_map(StringArray *self, char* (*callback)(char*,void *a
 StringArray *StringArray_filter(StringArray *self, bool (*callback)(char*,void *args));
 void StringArray_foreach(StringArray *self, void (*callback)(char*,void *args));
 
+void StringArray_self_map(StringArray *self, char* (*callback)(char*,void *args));
+void StringArray_self_filter(StringArray *self, bool (*callback)(char*,void *args));
 
 
 //=======================Definition==============================================
@@ -50,6 +52,7 @@ void StringArray_append_getting_ownership(StringArray *self,  char *element){
     self->elements[self->size] =element;
     self->size++;
 }
+
 
 void StringArray_insert(StringArray *self, int index, const char *element){
     int converted_index = index;
@@ -105,7 +108,8 @@ void StringArray_free(StringArray *self){
 StringArray * StringArray_map(StringArray *self, char* (*callback)(char*,void *args)){
     StringArray *new_array = StringArray_constructor();
     for(int i = 0; i < self->size; i++){
-        StringArray_append_getting_ownership(new_array, callback(StringArray_get(self, i), NULL));
+        char *new_element = callback(StringArray_get(self, i), NULL);
+        StringArray_append_getting_ownership(new_array, new_element);
     }
     return new_array;
 
@@ -129,14 +133,36 @@ void StringArray_foreach(StringArray *self, void (*callback)(char*,void *args)){
 }
 
 
+void StringArray_self_map(StringArray *self, char* (*callback)(char*,void *args)){
+    for(int i = 0; i < self->size; i++){
+        char *new_element = callback(StringArray_get(self, i), NULL);
+        free(self->elements[i]);
+        self->elements[i] = new_element;
+    }
+
+}
+void StringArray_self_filter(StringArray *self, bool (*callback)(char*,void *args)){
+    for(int i = 0; i < self->size; i++){
+        if(!callback(StringArray_get(self, i), NULL)){
+            StringArray_pop(self, i);
+            i--;
+        }
+    }
+}
+
+
 //=======================Usage==============================================
 bool not_John(char *name, void *args){
     return strcmp(name, "John") != 0;
 }
 
 char *add_Mr(char *name, void *args){
-    char *new_name = (char*)malloc(sizeof(char) * (strlen(name) + 4));
-    sprintf(new_name, "Mr. %s", name);
+    const char *prefix = "Mr. ";
+    int new_name_size = strlen(name) + strlen(prefix);
+    char *new_name = (char*)malloc(new_name_size+2);
+    sprintf(new_name, "%s%s",prefix, name);
+    new_name[new_name_size] = '\0';
+    
     return new_name;
 }
 
@@ -163,9 +189,6 @@ int main(){
     StringArray *new_names = StringArray_map(names, add_Mr);
     StringArray_print(new_names);
     StringArray_free(new_names);
-
-    puts("foreach names");
-    StringArray_foreach(names, print_name);
 
     StringArray_free(names);
     return 0;
