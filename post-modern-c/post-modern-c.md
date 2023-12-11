@@ -392,9 +392,12 @@ package/string_array/string_array.h<br>
 ## References:
 The entire OUI Code base follows this standard
 You can check it out for inspiration:
+
 Our Web Framework
 https://github.com/OUIsolutions/CWebStudio
+
 Our IO Handling Lib
 https://github.com/OUIsolutions/DoTheWorld
+
 Our HashTable Lib
 https://github.com/OUIsolutions/CHashManipulator
