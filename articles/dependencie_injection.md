@@ -90,7 +90,8 @@ and you will need to compile the code in these way:
 - you need to pass the dependencie in the compile time, so you need to recompile the code every time you change the dependencie
 
 
-
+## Run Time Ways to do Dependencie Injection
+There are many ways to do dependencie injection in the runtime, but the most common ways are:
 
 #### Project:
 For making all the above tecniques more easy to understand, we will make a simple project that
