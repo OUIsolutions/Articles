@@ -428,8 +428,9 @@ Dependency injection is a powerful design pattern that enables the creation of f
 
 When choosing a dependency injection approach, consider your specific requirements:
 
-- For simple libraries, the macro approach might be sufficient
-- For more complex libraries, consider one of the runtime approaches
+- Avoid Macros for dependency injection due to their limitations
+- For simple libraries, global function pointers may be sufficient
+- For more complex libraries, consider struct-based approaches
 - The hybrid approach offers the best flexibility but at the cost of complexity
 
 Remember that the goal of dependency injection is to make your library more versatile while reducing the burden of platform-specific code. By implementing it effectively, you can create libraries that are easier to maintain, test, and use across different environments.
