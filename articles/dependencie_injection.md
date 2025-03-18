@@ -72,6 +72,7 @@ gcc project/main.c project/my_lib.c -DMY_LIB_DEPS='"deps.h"'
 
 #### Advantages:
 - Simple implementation
+- Compile time errors (way more easy to debu)
 - No global variables required
 - Minimal runtime overhead
 
