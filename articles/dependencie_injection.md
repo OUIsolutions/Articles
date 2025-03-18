@@ -296,3 +296,110 @@ void my_lib_func(MyLibDeps *deps){
 - every function that uses the dependencie needs to receive the interface as a parameter
 
 
+### The Interface Way Combined with the Global Struct Way
+This way is a combination of the Interface Way and the Global Struct Way, you use a global struct to store the lambdas, but every function that uses the dependencie needs to receive the interface as a parameter,and you create a function wrapper that receives the interface as a parameter and calls the function with the global struct.
+These way its granular and easy to configure, but will increase the size of the library.
+
+#### project/main.c
+```c
+#include "my_lib.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdarg.h>
+
+int print_green(const char *format, ...){
+    printf("\033[0;32m");
+    va_list args;
+    va_start(args, format);
+    int ret = vprintf(format, args);
+    va_end(args);
+    printf("\033[0m");
+    return ret;
+}
+
+int main(){
+    //Defaut test
+    my_lib_deps_default.my_lib_printf = printf;
+    my_lib_deps_default.my_lib_malloc = malloc;
+
+    const char *import_error = check_lambdas();
+    if(import_error){
+        printf("Error importing %s\n", import_error);
+        return 1;
+    }
+
+    //it will call the default printf
+    my_lib_func();
+
+    MyLibDeps my_lib_deps_custom;
+    my_lib_deps_custom.my_lib_printf = print_green;
+    my_lib_deps_custom.my_lib_malloc = malloc;
+
+    import_error = check_lambdas_with_deps(&my_lib_deps_custom);
+    if(import_error){
+        printf("Error importing %s\n", import_error);
+        return 1;
+    }
+
+    //it will call the custom print_green
+    my_lib_func_with_deps(&my_lib_deps_custom);
+
+}
+```
+
+#### project/my_lib.h
+```c
+
+
+
+#ifndef MY_LIB_H
+#define MY_LIB_H
+
+typedef struct MyLibDeps{
+    int (*my_lib_printf)(const char *format, ...);
+    void *(*my_lib_malloc)(unsigned long int size);
+}MyLibDeps;
+
+extern MyLibDeps my_lib_deps_default;
+
+const char * check_lambdas_with_deps(MyLibDeps *deps);
+
+const char * check_lambdas();
+
+void my_lib_func_with_deps(MyLibDeps *deps);
+
+void my_lib_func();
+
+#endif
+```
+
+#### project/my_lib.c
+```c
+
+#include "my_lib.h"
+
+MyLibDeps my_lib_deps_default;
+
+const char * check_lambdas_with_deps(MyLibDeps *deps){
+    
+    if(!deps->my_lib_printf){
+        return "my_lib_printf";
+    }
+    if(!deps->my_lib_printf){
+        return "my_lib_malloc";
+    }
+    return 0;
+}
+const char * check_lambdas(){
+    return check_lambdas_with_deps(&my_lib_deps_default);
+}
+
+void my_lib_func_with_deps(MyLibDeps *deps){
+    deps->my_lib_printf("Hello World\n");
+}
+
+void my_lib_func(){
+    return my_lib_func_with_deps(&my_lib_deps_default);
+}
+
+```
