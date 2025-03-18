@@ -141,7 +141,7 @@ void my_lib_func(){
 - you need to check if the dependencie is setted before using it
 
 
-## The Global Lambda Struct Way
+## The Global Struct Way
 its very similar to the Global Lambda way, but instead of using global variables, you use a struct to store the lambdas.
 it gives the advantage that does its more easy to configure.
 
@@ -210,3 +210,89 @@ void my_lib_func(){
 }
 
 ```
+
+#### Pros:
+- **all the pros of the Global Lambda way**
+- lambda declaration is placed in a unique place (struct declaration)
+
+#### Cons:
+- **all the cons of the Global Lambda way**
+
+### The Interface Way
+This way is very similar to the Global Struct way, but instead of using a struct, you use a interface to store the lambdas.
+it gives the advantage that does its more easy to configure, but every  function that uses the dependencie needs to receive the interface as a parameter.
+
+#### project/main.c
+```c
+#include "my_lib.h"
+#include <stdio.h>
+#include <stdlib.h>
+int main(){
+    
+    MyLibDeps my_lib_deps = {
+        .my_lib_printf = printf,
+        .my_lib_malloc = malloc
+    };
+
+    const char *import_error = check_lambdas(&my_lib_deps);
+    if(import_error){
+        printf("Error importing %s\n", import_error);
+        return 1;
+    }
+
+    my_lib_func(&my_lib_deps);
+}
+```
+
+#### project/my_lib.h
+```c
+
+
+#ifndef MY_LIB_H
+#define MY_LIB_H
+
+typedef struct MyLibDeps{
+    int (*my_lib_printf)(const char *format, ...);
+    void *(*my_lib_malloc)(unsigned long int size);
+}MyLibDeps;
+
+
+const char * check_lambdas(MyLibDeps *deps);
+
+
+void my_lib_func(MyLibDeps *deps);
+#endif
+```
+
+#### project/my_lib.c
+```c
+
+#include "my_lib.h"
+
+const char * check_lambdas(MyLibDeps *deps){
+    
+    if(!deps->my_lib_printf){
+        return "my_lib_printf";
+    }
+    if(!deps->my_lib_printf){
+        return "my_lib_malloc";
+    }
+    return 0;
+}
+
+void my_lib_func(MyLibDeps *deps){
+    deps->my_lib_printf("Hello World\n");
+}
+
+```
+
+#### Pros:
+- **all the pros of the Global Struct way**
+- its even more easy to configure the dependencie
+- its even more granular than the Global Struct way
+
+#### Cons:
+- **all the cons of the Global Struct way**
+- every function that uses the dependencie needs to receive the interface as a parameter
+
+
