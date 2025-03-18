@@ -42,3 +42,15 @@ void my_lib_func(){
     my_lib_printf("Hello World\n");
 }
 ```
+
+#### Pros:
+- Its simple to do
+- it dont requires global variables
+#### Cons:
+- for beeing Compile time, you cant change the dependencie in the runtime
+- you cannot make a low granularity dependencie injection
+- you need to pass the dependencie in the compile time, so you need to recompile the code every time you change the dependencie
+
+
+## The Global Lambda way
+This way is a little more complex, but its more flexible than the macro way. The idea is to make the user pass the dependencie in the runtime, using a global variable that is a lambda function.
