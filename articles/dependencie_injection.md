@@ -12,15 +12,21 @@ dependencie that the library needs to run. This way, the user can pass the depen
 that he wants, and the library will run in every OS that the user wants.
 
 
-## The Macro Way 
-I personaly dont like this way, but its the most common way to do it. The idea is to
-make the user pass the dependencie in the compile time, with macros.
+
 #### Project:
+For making these tutorial more easy to understand, we will make a simple project that
+has this following structure:
 ```txt
 project/
 ├── main.c
+├── my_lib.c
 └── my_lib.h
 ```
+
+## The Macro Way 
+I personaly dont like this way, but its the most common way to do it. The idea is to
+make the user pass the dependencie in the compile time, with macros.
+
 
 #### project/main.c
 ```c
@@ -56,13 +62,6 @@ void my_lib_func(){
 This way is a little more complex, but its more flexible than the macro way. The idea is to make the user pass the dependencie in the runtime, using a global variable that is a lambda function.
 
 
-#### Project:
-```txt
-project/
-├── main.c
-├── my_lib.c
-└── my_lib.h
-```
 
 #### project/main.c
 ```c
@@ -146,3 +145,68 @@ void my_lib_func(){
 its very similar to the Global Lambda way, but instead of using global variables, you use a struct to store the lambdas.
 it gives the advantage that does its more easy to configure.
 
+#### project/main.c
+```c
+#include "my_lib.h"
+#include <stdio.h>
+#include <stdlib.h>
+int main(){
+
+
+    my_lib_deps.my_lib_printf = printf;
+    my_lib_deps.my_lib_malloc = malloc;
+
+    const char *import_error = check_lambdas();
+    if(import_error){
+        printf("Error importing %s\n", import_error);
+        return 1;
+    }
+
+    my_lib_func();
+}
+```
+
+#### project/my_lib.h
+```c
+#ifndef MY_LIB_H
+#define MY_LIB_H
+
+typedef struct MyLibDeps{
+    int (*my_lib_printf)(const char *format, ...);
+    void *(*my_lib_malloc)(unsigned long int size);
+}MyLibDeps;
+
+extern MyLibDeps my_lib_deps;
+
+
+
+const char * check_lambdas();
+
+
+void my_lib_func();
+#endif
+```
+
+#### project/my_lib.c
+```c
+
+#include "my_lib.h"
+
+MyLibDeps my_lib_deps;
+
+const char * check_lambdas(){
+    
+    if(!my_lib_deps.my_lib_printf){
+        return "my_lib_printf";
+    }
+    if(!my_lib_deps.my_lib_printf){
+        return "my_lib_malloc";
+    }
+    return 0;
+}
+
+void my_lib_func(){
+    my_lib_deps.my_lib_printf("Hello World\n");
+}
+
+```
