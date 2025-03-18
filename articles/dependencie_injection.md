@@ -13,33 +13,53 @@ that he wants, and the library will run in every OS that the user wants.
 
 
 
+
+## The Macro Way 
+I personaly dont like this way, but its the most common way to do it. The idea is to
+make the user pass the dependencie in the compile time, with macros.In These Case we 
+pass a file to be imported in the compile time, and the user needs to define the macros
+that the library uses. (But you can find diferent ways to do it)
+
 #### Project:
-For making these tutorial more easy to understand, we will make a simple project that
-has this following structure:
 ```txt
 project/
+├── deps.h
 ├── main.c
 ├── my_lib.c
 └── my_lib.h
 ```
 
-## The Macro Way 
-I personaly dont like this way, but its the most common way to do it. The idea is to
-make the user pass the dependencie in the compile time, with macros.
-
-
 #### project/main.c
 ```c
 #include <stdio.h>
-#define my_lib_printf printf
 #include "my_lib.h"
 
 int main(){
     my_lib_func();
 }
 ```
+
 #### project/my_lib.h
 ```c
+
+
+#ifndef MY_LIB_H
+#define MY_LIB_H
+
+
+void my_lib_func();
+
+#endif
+```
+
+#### project/my_lib.c
+```c
+
+
+#include "my_lib.h"
+#include  MY_LIB_DEPS
+
+
 #ifndef my_lib_printf 
 #error "my_lib_printf is not defined"
 #endif
@@ -47,7 +67,19 @@ int main(){
 void my_lib_func(){
     my_lib_printf("Hello World\n");
 }
+
 ```
+
+#### project/deps.h
+```c
+#include <stdio.h>
+#define my_lib_printf printf
+```
+and you will need to compile the code in these way:
+```sh
+ gcc project/main.c  project/my_lib.c -DMY_LIB_DEPS='"deps.h"'
+```
+
 
 #### Pros:
 - Its simple to do
@@ -57,6 +89,18 @@ void my_lib_func(){
 - you cannot make a low granularity dependencie injection
 - you need to pass the dependencie in the compile time, so you need to recompile the code every time you change the dependencie
 
+
+
+
+#### Project:
+For making all the above tecniques more easy to understand, we will make a simple project that
+has this following structure:
+```txt
+project/
+├── main.c
+├── my_lib.c
+└── my_lib.h
+```
 
 ## The Global Lambda way
 This way is a little more complex, but its more flexible than the macro way. The idea is to make the user pass the dependencie in the runtime, using a global variable that is a lambda function.
